@@ -22,5 +22,29 @@ target_link_libraries(4-8 ${Matlab_ROOT_DIR}/extern/lib/win64/microsoft/libMatla
 target_link_libraries(4-8 ${Matlab_ROOT_DIR}/extern/lib/win64/microsoft/libMatlabDataArray.lib)
 ```
 
+---
 
+关于matlabData主要想强调的有两点
 
+- feval接受参数的方式
+
+  - 最小的单位应该是matlab::data::array之类的
+  - 如果对应的matlab函数是要接受多个参数的，就需要用std::vector把他们包装起来
+
+- 数据默认是按照列优先排布的
+
+  - [matlab.data.arrayfactory](https://www.mathworks.com/help/matlab/apiref/matlab.data.arrayfactory.html#bvn7dve-1)
+
+    > *The data is copied by default in column-major order. To specify the data layout, use the* `*inputLayout*` *parameter.*
+
+  - ```c++
+    std::vector<matlab::data::Array> args({
+            factory.createArray<int16_t>({2,2},  {-5, 17, 10, 0}),
+            factory.createArray<int16_t>({2,2}, {-15, 3, 100, 0}) });
+    ```
+
+    - <img src="https://raw.githubusercontent.com/batman47steam/typora-pic/main/images/image-20220408155826934.png" alt="image-20220408155826934" style="zoom:80%;" />
+
+    - [gcd](https://www.mathworks.com/help/matlab/ref/gcd.html)
+
+      
